@@ -70,7 +70,7 @@ class VideoLoader(Dataset):
                         .run(capture_stdout=True, quiet=True)
                 )
                 if not out:
-                    print("out is None; error: " + err)
+                    print(f"out is None; error: {err}")
                 if self.centercrop and isinstance(self.size, int):
                     height, width = self.size, self.size
                 video = np.frombuffer(out, np.uint8).reshape([-1, height, width, 3])
