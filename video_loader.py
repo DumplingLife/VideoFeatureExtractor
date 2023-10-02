@@ -73,8 +73,9 @@ class VideoLoader(Dataset):
                 video = np.frombuffer(out, np.uint8).reshape([-1, height, width, 3])
                 video = th.from_numpy(video.astype('float32'))
                 video = video.permute(0, 3, 1, 2)
-            except:
+            except Exception as e:
                 print('ffprobe failed at: {}'.format(video_path))
+                print(e)
 
         return {'video': video, 'input': video_path, 'output': output_file}
 
