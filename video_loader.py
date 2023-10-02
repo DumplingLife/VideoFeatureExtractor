@@ -4,6 +4,7 @@ import pandas as pd
 import os
 import numpy as np
 import ffmpeg
+import traceback
 
 
 class VideoLoader(Dataset):
@@ -73,9 +74,9 @@ class VideoLoader(Dataset):
                 video = np.frombuffer(out, np.uint8).reshape([-1, height, width, 3])
                 video = th.from_numpy(video.astype('float32'))
                 video = video.permute(0, 3, 1, 2)
-            except Exception as e:
+            except Exception:
                 print('ffprobe failed at: {}'.format(video_path))
-                print(e)
+                traceback.print_exc()
 
         return {'video': video, 'input': video_path, 'output': output_file}
 
