@@ -2,10 +2,14 @@
 
 import numpy as np
 import sys
+import os
 
 name = sys.argv[1]
+directory_path = f"features_segmented/{name}"
 
-file_paths = [f"features_segmented/{name}/{i}.npy" for i in range(6)]
+# Get list of all .npy files in the directory
+file_paths = [os.path.join(directory_path, file) for file in os.listdir(directory_path) if file.endswith('.npy')]
+
 arrays = []
 for file_path in file_paths:
     array = np.load(file_path)
