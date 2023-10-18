@@ -33,7 +33,6 @@ class Preprocessing(object):
             return th.cat((tensor, z), 0)
 
 
-    """
     def __call__(self, tensor):
         if self.type == '2d':
             tensor = tensor / 255.0
@@ -61,8 +60,8 @@ class Preprocessing(object):
             tensor = tensor.transpose(1, 2)
 
         return tensor
-    """
 
+    """
     def process_chunk(self, tensor):
         if self.type == '2d':
             tensor = tensor / 255.0
@@ -101,3 +100,4 @@ class Preprocessing(object):
 
         processed_tensor = th.cat(processed_tensor_list, 0)
         return processed_tensor
+    """
