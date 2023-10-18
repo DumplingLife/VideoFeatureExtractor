@@ -1,6 +1,9 @@
-import numpy as np
+# usage: python combine_features.py name
 
-name = "2022-06-07_17-18-46_S00_eye-tracking-video-worldGaze_frame"
+import numpy as np
+import sys
+
+name = sys.argv[1]
 
 file_paths = [f"features_segmented/{name}/{i}.npy" for i in range(6)]
 arrays = []
