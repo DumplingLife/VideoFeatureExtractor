@@ -7,12 +7,9 @@ import os
 name = sys.argv[1]
 directory_path = f"features_segmented/{name}"
 
-def sort_files(file):
-    return 
-
 file_paths = sorted(
     [os.path.join(directory_path, file) for file in os.listdir(directory_path) if file.endswith('.npy')],
-    key=lambda file: int(file.split('.')[0])
+    key=lambda file: int(os.path.basename(file).split('.')[0]) # key is number of file
     )
 
 arrays = []
