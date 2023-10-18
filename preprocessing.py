@@ -32,6 +32,8 @@ class Preprocessing(object):
             z = th.zeros(n, tensor.shape[1], tensor.shape[2], tensor.shape[3])
             return th.cat((tensor, z), 0)
 
+
+    """
     def __call__(self, tensor):
         if self.type == '2d':
             tensor = tensor / 255.0
@@ -59,4 +61,43 @@ class Preprocessing(object):
             tensor = tensor.transpose(1, 2)
 
         return tensor
+    """
 
+    def process_chunk(self, tensor):
+        if self.type == '2d':
+            tensor = tensor / 255.0
+            tensor = self.norm(tensor)
+        elif self.type == '3d':
+            tensor = self._zero_pad(tensor, 16)
+            tensor = self.norm(tensor)
+            tensor = tensor.view(-1, 16, 3, 112, 112)
+            tensor = tensor.transpose(1, 2)
+        elif self.type == 's3dg':
+            tensor = tensor / 255.0
+            tensor = self._zero_pad(tensor, self.FRAMERATE_DICT[self.type])
+            tensor_size = tensor.size()
+            tensor = tensor.view(-1, self.FRAMERATE_DICT[self.type], 3, tensor_size[-2], tensor_size[-1])
+            tensor = tensor.transpose(1, 2)
+        elif self.type == 'raw_data':
+            tensor = tensor / 255.0
+            tensor = self._zero_pad(tensor, self.FRAMERATE_DICT[self.type])
+            tensor_size = tensor.size()
+            tensor = tensor.view(-1, self.FRAMERATE_DICT[self.type], 3, tensor_size[-2], tensor_size[-1])
+            tensor = tensor.transpose(1, 2)
+        return tensor
+
+    def __call__(self, tensor):
+        chunk_size = 1152  # must be multiple of everything in FRAMERATE_DICT
+        processed_tensor_list = []
+    
+        num_chunks = (tensor.size(0) + chunk_size - 1) // chunk_size
+
+        for i in range(num_chunks):
+            start_idx = i * chunk_size
+            end_idx = min(start_idx + chunk_size, tensor.size(0))
+            chunk = tensor[start_idx:end_idx]
+            processed_chunk = self.process_chunk(chunk)
+            processed_tensor_list.append(processed_chunk)
+
+        processed_tensor = th.cat(processed_tensor_list, 0)
+        return processed_tensor
